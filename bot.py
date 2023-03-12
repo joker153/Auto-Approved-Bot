@@ -68,9 +68,8 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
         welcome_text = WELCOME_TEXT.format(mention=user.mention, title=chat.title)
         button = None
         if JOIN_CHANNEL_LINK:
-            button = [[InlineKeyboardButton(JOIN_CHANNEL_TEXT, url=JOIN_CHANNEL_LINK)]]
+            button = InlineKeyboardMarkup([[InlineKeyboardButton(JOIN_CHANNEL_TEXT, url=JOIN_CHANNEL_LINK)]])
         await client.send_message(chat_id=user.id, text=welcome_text, reply_markup=button)
-
 
 @pr0fess0r_99.on_message(filters.private & filters.command(["broadcast"]))
 async def broadcast(client: pr0fess0r_99, message: Message):
