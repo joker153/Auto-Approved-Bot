@@ -64,11 +64,24 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
 
 @pr0fess0r_99.on_message(filters.private & filters.command(["broadcast"]))
 async def broadcast(client: pr0fess0r_99, message: Message):
+    if len(message.text.split()) == 1:
+        await message.reply_text("Please specify a message to broadcast.")
+        return
+
+    text = message.text.split(None, 1)[1]
     users_count = get_users_count()
     blocked_users_count = get_blocked_users_count()
     broadcast_success_count = get_broadcast_success_count()
-    text = message.text.split(None, 1)[1]
-    sent = 0
+
+    for user in mongo_db["users"].find():
+        try:
+            await client.send_message(chat_id=user["user_id"], text=text, disable_web_page_preview=True)
+        except:
+            mongo_db["blocked_users"].insert_one(user)
+            mongo_db["users"].delete_one({"user_id": user["user_id"]})
+
+    await message.reply_text(f"Broadcast sent to {users_count - blocked_users_count} users out of {users_count} users.")
+    mongo_db["broadcasts"].insert_one({"text": text, "success_count": users_count - blocked_users_count})
 
 print("Auto Approved Bot")
 pr0fess0r_99.run()
