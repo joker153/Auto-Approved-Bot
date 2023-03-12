@@ -70,3 +70,6 @@ async def broadcast(client: pr0fess0r_99, message: Message):
             print(e)
     # Save broadcast in the database
     mongo_db["broadcasts"].insert_one({"message": message.text.split()})
+
+print("Auto Approved Bot")
+pr0fess0r_99.run()
