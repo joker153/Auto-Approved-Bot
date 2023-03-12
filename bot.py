@@ -20,7 +20,9 @@ pr0fess0r_99 = Client(
 )
 
 APPROVED = environ.get("APPROVED_WELCOME", "on").lower()
-TEXT = environ.get("APPROVED_WELCOME_TEXT", f"Hello {{mention}}\nWelcome To {{title}}\n\nYour Auto Approved\n\nJoin our movie channel for the latest updates: [Join Now]({https://t.me/+HKK5CVOoIMs4NWFl})")
+TEXT = environ.get("APPROVED_WELCOME_TEXT", "Hello {mention}\nWelcome To {title}\n\nYour Auto Approved")
+CHANNEL_BUTTON = InlineKeyboardButton("Join Our Movie Channel", url="https://t.me/+HKK5CVOoIMs4NWFl")
+
 # Function to get the number of bot users
 def get_users_count():
     return mongo_db["users"].count_documents({})
@@ -53,7 +55,8 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
     print(f"{user.first_name} Joined 🤝") # Logs
     await client.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
     if APPROVED == "on":
-        await client.send_message(chat_id=user.id, text=TEXT.format(mention=user.mention, title=chat.title))
+        text = TEXT.format(mention=user.mention, title=chat.title)
+        await client.send_message(chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup([[CHANNEL_BUTTON]]))
 
 print("Auto Approved Bot")
 pr0fess0r_99.run()
