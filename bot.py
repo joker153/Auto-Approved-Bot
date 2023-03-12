@@ -46,5 +46,15 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
     # Send log message to log channel
     await client.send_message(chat_id=LOG_CHANNEL, text=f"{user.mention} joined {chat.title}")
 
+@pr0fess0r_99.on_message(filters.command(["broadcast"]) & filters.user(list(int(x) for x in environ.get("ADMIN_IDS", "").split())))
+async def broadcast(client: pr0fess0r_99, message: Message):
+    all_users = mongo_db["users"].find()
+    for user in all_users:
+        try:
+            await client.send_message(chat_id=user["user_id"], text=message.text.split("/broadcast ", maxsplit=1)[1])
+        except Exception as e:
+            print(e)
+    await message.reply_text("Broadcast completed!")
+
 print("Auto Approved Bot")
 pr0fess0r_99.run()
