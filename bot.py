@@ -52,7 +52,7 @@ async def start(client: pr0fess0r_99, message: Message):
     button = [[ InlineKeyboardButton("➕️ Add Me To Your Chat ➕️", url=f"http://t.me/{approvedbot.username}?startgroup=botstart") ]]
     await client.send_message(
         chat_id=message.chat.id,
-        photo=PIC
+        photo=PIC,
         caption=f"**__Hello {message.from_user.mention} ɪ ᴀᴍ ᴀɴ ᴀᴜᴛᴏ ᴀᴘᴘʀᴏᴠᴇʀ ᴊᴏɪɴ ʀᴇQᴜᴇꜱᴛ ʙᴏᴛ \n\n ɪ ᴄᴀɴ ᴀᴘᴘʀᴏᴠᴇ ᴜꜱᴇʀꜱ ɪɴ ɢʀᴏᴜᴘꜱ/ᴄʜᴀɴɴᴇʟꜱ.ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀᴛ ᴀɴᴅ ᴘʀᴏᴍᴏᴛᴇ ᴍᴇ ᴛᴏ ᴀᴅᴍɪɴ ᴡɪᴛʜ ᴀᴅᴅ ᴍᴇᴍʙᴇʀꜱ ᴘᴇʀᴍɪꜱꜱɪᴏɴ.",
         reply_markup=InlineKeyboardMarkup(button),
         disable_web_page_preview=True
