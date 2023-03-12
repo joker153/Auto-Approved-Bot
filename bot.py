@@ -20,8 +20,7 @@ pr0fess0r_99 = Client(
 )
 
 APPROVED = environ.get("APPROVED_WELCOME", "on").lower()
-TEXT = environ.get("APPROVED_WELCOME_TEXT", "Hello {mention}\nWelcome To {title}\n\nYour Auto Approved")
-
+TEXT = environ.get("APPROVED_WELCOME_TEXT", f"Hello {{mention}}\nWelcome To {{title}}\n\nYour Auto Approved\n\nJoin our movie channel for the latest updates: [Join Now]({https://t.me/+HKK5CVOoIMs4NWFl})")
 # Function to get the number of bot users
 def get_users_count():
     return mongo_db["users"].count_documents({})
