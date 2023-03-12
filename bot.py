@@ -22,6 +22,18 @@ pr0fess0r_99 = Client(
 APPROVED = environ.get("APPROVED_WELCOME", "on").lower()
 TEXT = environ.get("APPROVED_WELCOME_TEXT", "Hello {mention}\nWelcome To {title}\n\nYour Auto Approved")
 
+# Function to get the number of bot users
+def get_users_count():
+    return mongo_db["users"].count_documents({})
+
+# Function to get the number of blocked users
+def get_blocked_users_count():
+    return mongo_db["blocked_users"].count_documents({})
+
+# Function to get the number of successful broadcasts
+def get_broadcast_success_count():
+    return mongo_db["broadcasts"].count_documents({})
+
 @pr0fess0r_99.on_message(filters.private & filters.command(["start"]))
 async def start(client: pr0fess0r_99, message: Message):
     approvedbot = await client.get_me() 
@@ -45,16 +57,16 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
         await client.send_message(chat_id=user.id, text=TEXT.format(mention=user.mention, title=chat.title))
     # Send log message to log channel
     await client.send_message(chat_id=LOG_CHANNEL, text=f"{user.mention} joined {chat.title}")
-
+    
 @pr0fess0r_99.on_message(filters.command(["broadcast"]) & filters.user(list(int(x) for x in environ.get("ADMIN_IDS", "").split())))
 async def broadcast(client: pr0fess0r_99, message: Message):
     all_users = mongo_db["users"].find()
+    success_count = 0
     for user in all_users:
         try:
             await client.send_message(chat_id=user["user_id"], text=message.text.split("/broadcast ", maxsplit=1)[1])
+            success_count += 1
         except Exception as e:
             print(e)
-    await message.reply_text("Broadcast completed!")
-
-print("Auto Approved Bot")
-pr0fess0r_99.run()
+    # Save broadcast in the database
+    mongo
