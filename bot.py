@@ -69,4 +69,4 @@ async def broadcast(client: pr0fess0r_99, message: Message):
         except Exception as e:
             print(e)
     # Save broadcast in the database
-    mongo
+    mongo_db["broadcasts"].insert_one({"message": message.text.split
