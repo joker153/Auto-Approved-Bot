@@ -54,7 +54,7 @@ async def start(client: pr0fess0r_99, message: Message):
         chat_id=message.chat.id,
         photo=PIC,
         caption=f"**__Hello {message.from_user.mention} ɪ ᴀᴍ ᴀɴ ᴀᴜᴛᴏ ᴀᴘᴘʀᴏᴠᴇʀ ᴊᴏɪɴ ʀᴇQᴜᴇꜱᴛ ʙᴏᴛ \n\n ɪ ᴄᴀɴ ᴀᴘᴘʀᴏᴠᴇ ᴜꜱᴇʀꜱ ɪɴ ɢʀᴏᴜᴘꜱ/ᴄʜᴀɴɴᴇʟꜱ.ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀᴛ ᴀɴᴅ ᴘʀᴏᴍᴏᴛᴇ ᴍᴇ ᴛᴏ ᴀᴅᴍɪɴ ᴡɪᴛʜ ᴀᴅᴅ ᴍᴇᴍʙᴇʀꜱ ᴘᴇʀᴍɪꜱꜱɪᴏɴ.",
-        reply_markup=InlineKeyboardMarkup(button),
+        reply_markup=InlineKeyboardMarkup(button)
     )
     # Save user in the database
     mongo_db["users"].insert_one({"user_id": message.from_user.id})
