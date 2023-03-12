@@ -26,15 +26,24 @@ JOIN_CHANNEL_LINK = environ.get("JOIN_CHANNEL_LINK")
 
 # Function to get the number of bot users
 def get_users_count():
-    return mongo_db["users"].count_documents({})
+    try:
+        return mongo_db["users"].count_documents({})
+    except:
+        return 0
 
 # Function to get the number of blocked users
 def get_blocked_users_count():
-    return mongo_db["blocked_users"].count_documents({})
+    try:
+        return mongo_db["blocked_users"].count_documents({})
+    except:
+        return 0
 
 # Function to get the number of successful broadcasts
 def get_broadcast_success_count():
-    return mongo_db["broadcasts"].count_documents({})
+    try:
+        return mongo_db["broadcasts"].count_documents({})
+    except:
+        return 0
 
 @pr0fess0r_99.on_message(filters.private & filters.command(["start"]))
 async def start(client: pr0fess0r_99, message: Message):
@@ -61,6 +70,7 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
         if JOIN_CHANNEL_LINK:
             button = [[InlineKeyboardButton(JOIN_CHANNEL_TEXT, url=JOIN_CHANNEL_LINK)]]
         await client.send_message(chat_id=user.id, text=welcome_text, reply_markup=button)
+
 
 @pr0fess0r_99.on_message(filters.private & filters.command(["broadcast"]))
 async def broadcast(client: pr0fess0r_99, message: Message):
