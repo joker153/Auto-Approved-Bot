@@ -59,12 +59,8 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
         welcome_text = WELCOME_TEXT.format(mention=user.mention, title=chat.title)
         button = None
         if JOIN_CHANNEL_LINK:
-    button = [[InlineKeyboardButton(JOIN_CHANNEL_TEXT, url=JOIN_CHANNEL_LINK)]]
-    reply_markup = InlineKeyboardMarkup(button)
-else:
-    reply_markup = None
-
-await client.send_message(chat_id=user.id, text=welcome_text, reply_markup=reply_markup)
+            button = [[InlineKeyboardButton(JOIN_CHANNEL_TEXT, url=JOIN_CHANNEL_LINK)]]
+        await client.send_message(chat_id=user.id, text=welcome_text, reply_markup=button)
 
 @pr0fess0r_99.on_message(filters.private & filters.command(["broadcast"]))
 async def broadcast(client: pr0fess0r_99, message: Message):
@@ -77,15 +73,6 @@ async def broadcast(client: pr0fess0r_99, message: Message):
     blocked_users_count = get_blocked_users_count()
     broadcast_success_count = get_broadcast_success_count()
 
-    for user in mongo_db["users"].find():
-        try:
-            await client.send_message(chat_id=user["user_id"], text=text, disable_web_page_preview=True)
-        except:
-            mongo_db["blocked_users"].insert_one(user)
-            mongo_db["users"].delete_one({"user_id": user["user_id"]})
-
-    await message.reply_text(f"Broadcast sent to {users_count - blocked_users_count} users out of {users_count} users.")
-    mongo_db["broadcasts"].insert_one({"text": text, "success_count": users_count - blocked_users_count})
 
 print("Auto Approved Bot")
 pr0fess0r_99.run()
