@@ -10,7 +10,7 @@ mongo_client = MongoClient(DATABASE_URI)
 mongo_db = mongo_client[DATABASE_NAME]
 
 # Log channel
-LOG_CHANNEL = environ["LOG_CHANNEL"]
+LOG_CHANNEL = environ.get("LOG_CHANNEL")
 
 pr0fess0r_99 = Client(
     "Auto Approved Bot",
@@ -20,8 +20,9 @@ pr0fess0r_99 = Client(
 )
 
 APPROVED = environ.get("APPROVED_WELCOME", "on").lower()
-TEXT = environ.get("APPROVED_WELCOME_TEXT", "Hello {mention}\nWelcome To {title}\n\nYour Auto Approved")
-CHANNEL_BUTTON = InlineKeyboardButton("Join Our Movie Channel", url="https://t.me/+HKK5CVOoIMs4NWFl")
+WELCOME_TEXT = environ.get("APPROVED_WELCOME_TEXT", "Hello {mention}\nWelcome To {title}\n\nYour Auto Approved")
+JOIN_CHANNEL_TEXT = environ.get("JOIN_CHANNEL_TEXT", "Join Our Movie Channel")
+JOIN_CHANNEL_LINK = environ.get("JOIN_CHANNEL_LINK")
 
 # Function to get the number of bot users
 def get_users_count():
@@ -55,8 +56,19 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
     print(f"{user.first_name} Joined 🤝") # Logs
     await client.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
     if APPROVED == "on":
-        text = TEXT.format(mention=user.mention, title=chat.title)
-        await client.send_message(chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup([[CHANNEL_BUTTON]]))
+        welcome_text = WELCOME_TEXT.format(mention=user.mention, title=chat.title)
+        button = None
+        if JOIN_CHANNEL_LINK:
+            button = [[InlineKeyboardButton(JOIN_CHANNEL_TEXT, url=JOIN_CHANNEL_LINK)]]
+        await client.send_message(chat_id=user.id, text=welcome_text, reply_markup=button)
+
+@pr0fess0r_99.on_message(filters.private & filters.command(["broadcast"]))
+async def broadcast(client: pr0fess0r_99, message: Message):
+    users_count = get_users_count()
+    blocked_users_count = get_blocked_users_count()
+    broadcast_success_count = get_broadcast_success_count()
+    text = message.text.split(None, 1)[1]
+    sent = 0
 
 print("Auto Approved Bot")
 pr0fess0r_99.run()
