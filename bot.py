@@ -2,6 +2,7 @@ from os import environ
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, User, ChatJoinRequest
 from pymongo import MongoClient
+import logging
 
 # Mongo DB details
 DATABASE_NAME = environ["DATABASE_NAME"]
@@ -22,6 +23,12 @@ pr0fess0r_99 = Client(
 APPROVED = environ.get("APPROVED_WELCOME", "on").lower()
 TEXT = environ.get("APPROVED_WELCOME_TEXT", "Hello {mention}\nWelcome To {title}\n\nYour Auto Approved")
 
+# Connect to MongoDB database
+try:
+    mongo_client.server_info()
+except:
+    logging.error("Failed to connect to the database")
+
 @pr0fess0r_99.on_message(filters.private & filters.command(["start"]))
 async def start(client: pr0fess0r_99, message: Message):
     approvedbot = await client.get_me() 
@@ -39,22 +46,16 @@ async def start(client: pr0fess0r_99, message: Message):
 async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
     chat = message.chat
     user = message.from_user
-    print(f"{user.first_name} Joined 🤝") # Logs
-    await client.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
-    if APPROVED == "on":
-        await client.send_message(chat_id=user.id, text=TEXT.format(mention=user.mention, title=chat.title))
-    # Send log message to log channel
-    await client.send_message(chat_id=LOG_CHANNEL, text=f"{user.mention} joined {chat.title}")
+    try:
+        chat_member = await client.get_chat_member(chat.id, "me")
+        if chat_member.status not in ["administrator", "creator"]:
+            raise Exception("Bot is not an admin in this chat.")
+        await client.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
+        if APPROVED == "on":
+            await client.send_message(chat_id=user.id, text=TEXT.format(mention=user.mention, title=chat.title))
+        # Send log message to log channel
+        await client.send_message(chat_id=LOG_CHANNEL, text=f"{user.mention} joined {chat.title}")
+    except Exception as e:
+        logging.error(str(e))
 
-@pr0fess0r_99.on_message(filters.command(["broadcast"]) & filters.user(list(int(x) for x in environ.get("ADMIN_IDS", "").split())))
-async def broadcast(client: pr0fess0r_99, message: Message):
-    all_users = mongo_db["users"].find()
-    for user in all_users:
-        try:
-            await client.send_message(chat_id=user["user_id"], text=message.text.split("/broadcast ", maxsplit=1)[1])
-        except Exception as e:
-            print(e)
-    await message.reply_text("Broadcast completed!")
-
-print("Auto Approved Bot")
-pr0fess0r_99.run()
+@pr0fess0r_99.on_message(filters.command(["broadcast"]) & filters.user
