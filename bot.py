@@ -12,11 +12,11 @@ mongo_db = mongo_client[DATABASE_NAME]
 # Log channel
 LOG_CHANNEL = environ["LOG_CHANNEL"]
 
-pr0fess0r_99=Client(
+pr0fess0r_99 = Client(
     "Auto Approved Bot",
-    bot_token = environ["BOT_TOKEN"],
-    api_id = int(environ["API_ID"]),
-    api_hash = environ["API_HASH"]
+    bot_token=environ["BOT_TOKEN"],
+    api_id=int(environ["API_ID"]),
+    api_hash=environ["API_HASH"],
 )
 
 APPROVED = environ.get("APPROVED_WELCOME", "on").lower()
@@ -25,9 +25,13 @@ TEXT = environ.get("APPROVED_WELCOME_TEXT", "Hello {mention}\nWelcome To {title}
 @pr0fess0r_99.on_message(filters.private & filters.command(["start"]))
 async def start(client: pr0fess0r_99, message: Message):
     approvedbot = await client.get_me() 
-    button = [[ InlineKeyboardButton("📦 Repo", url="https://github.com/PR0FESS0R-99/Auto-Approved-Bot"), InlineKeyboardButton("Updates 📢", url="t.me/Mo_Tech_YT") ],
-              [ InlineKeyboardButton("➕️ Add Me To Your Chat ➕️", url=f"http://t.me/{approvedbot.username}?startgroup=botstart") ]]
-    await client.send_message(chat_id=message.chat.id, text=f"**__Hello {message.from_user.mention} Iam Auto Approver Join Request Bot Just [Add Me To Your Group Channnl](http://t.me/{approvedbot.username}?startgroup=botstart) || Repo https://github.com/PR0FESS0R-99/Auto-Approved-Bot||**__", reply_markup=InlineKeyboardMarkup(button), disable_web_page_preview=True)
+    button = [[ InlineKeyboardButton("➕️ Add Me To Your Chat ➕️", url=f"http://t.me/{approvedbot.username}?startgroup=botstart") ]]
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=f"**__Hello {message.from_user.mention} I am an Auto Approver Join Request Bot. Just [Add Me To Your Group or Channel](http://t.me/{approvedbot.username}?startgroup=botstart).__**",
+        reply_markup=InlineKeyboardMarkup(button),
+        disable_web_page_preview=True
+    )
     # Save user in the database
     mongo_db["users"].insert_one({"user_id": message.from_user.id})
 
